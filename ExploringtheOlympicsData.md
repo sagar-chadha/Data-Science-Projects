@@ -11,7 +11,7 @@ With our weapons ready, its time to see who's BOSS!
 
 
 ```python
-# @hidden cell
+# @hidden_cell
 import pandas as pd
 import numpy as np
 %pylab inline
