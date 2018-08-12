@@ -11,6 +11,7 @@ With our weapons ready, its time to see who's BOSS!
 
 
 ```python
+# @hidden cell
 import pandas as pd
 import numpy as np
 %pylab inline
@@ -19,13 +20,17 @@ import numpy as np
     Populating the interactive namespace from numpy and matplotlib
     
 
+The first five rows of the olympics data are shown below. We have 271,116 rows and 15 columns. Variables include Name, Sex, Age, Height, Weight of the athlete, his team name, sport, event and the year, season, city of the olympics he/she took part in. In addition, the data captures the medal won (if any) by the athlete.
+
 
 ```python
-# Read in the data set
+# @hidden cell
 olympics = pd.read_csv('C:/Users/sagar/Desktop/My Work/McCombs Stuff/MSBA Courses/Data Analytics Programming/Group Project/Data/athlete_events.csv')
+print olympics.shape
 print olympics.head()
 ```
 
+    (271116, 15)
        ID                      Name Sex   Age  Height  Weight            Team  \
     0   1                 A Dijiang   M  24.0   180.0    80.0           China   
     1   2                  A Lamusi   M  23.0   170.0    60.0           China   
@@ -48,12 +53,14 @@ print olympics.head()
     4  Speed Skating Women's 500 metres   NaN  
     
 
-### Data exploration and Basic Hygiene
+### Missing value check and Cleaning
 
 #### 1) Missing Values
+Printing column wise missing values we get-
 
 
 ```python
+# @hidden cell
 print olympics.isnull().sum()
 ```
 
@@ -75,9 +82,7 @@ print olympics.isnull().sum()
     dtype: int64
     
 
-We find that height, weight and Age have a lot of missing values. Medals have a NaN in about 2,31,333 rows. These can be explained since not all participating athletes would win medals.
-
-Let's replace these missing values by 'Did not win' or 'DNW'
+We find that height, weight and Age have a lot of missing values. Medals have a NaN in about 2,31,333 rows. These can be explained since not all participating athletes would win medals. Let's replace these missing values by 'Did not win' or 'DNW'
 
 
 ```python
@@ -101,22 +106,20 @@ print olympics.loc[:, ['NOC', 'Team']].drop_duplicates()['NOC'].value_counts().h
     Name: NOC, dtype: int64
     
 
-Hmm, This looks interesting. So NOC code 'FRA' is associated with 160 teams? That sounds prepostorous! Let's do a groupby and verify this.
+Hmm, This looks interesting. So NOC code 'FRA' is associated with 160 teams? That sounds prepostorous! Let's use a master of NOC to country mapping to correct this.
 
 
 ```python
-olympics_NOC_Team = olympics.groupby(['NOC', 'Team'])[['Medal']].agg('count').reset_index()
+#olympics_NOC_Team = olympics.groupby(['NOC', 'Team'])[['Medal']].agg('count').reset_index()
 
-print len(olympics_NOC_Team.loc[olympics_NOC_Team['NOC'] == 'FRA', :])
+#print len(olympics_NOC_Team.loc[olympics_NOC_Team['NOC'] == 'FRA', :])
 ```
 
-    160
-    
-
-So this is true! Okay let's use a master of NOC to country mapping to correct this.
+The NOC data has the NOC code and the corresponding Country Name. The first five rows of the data are shown below -
 
 
 ```python
+# @hidden cell
 # Lets read in the noc_country mapping first
 noc_country = pd.read_csv('C:/Users/sagar/Desktop/My Work/McCombs Stuff/MSBA Courses/Data Analytics Programming/Group Project/Data/noc_regions.csv')
 noc_country.drop('notes', axis = 1 , inplace = True)
@@ -133,7 +136,7 @@ print noc_country.head()
     4  AND      Andorra
     
 
-We now need to merge the original dataset with the NOC master using the NOC code as the primary key. This has to be a left join since we want all participating countries to remain in the data even if their NOC-Country is not found in the master. We can easily correct those manually.
+We now need to merge the original dataset with the NOC master using the **NOC code as the primary key**. This has to be a left join since we want all participating countries to remain in the data even if their NOC-Country is not found in the master. We can easily correct those manually.
 
 
 ```python
@@ -142,36 +145,13 @@ olympics_merge = olympics.merge(noc_country,
                                 left_on = 'NOC',
                                 right_on = 'NOC',
                                 how = 'left')
-
-print olympics_merge.head()
 ```
 
-       ID                      Name Sex   Age  Height  Weight            Team  \
-    0   1                 A Dijiang   M  24.0   180.0    80.0           China   
-    1   2                  A Lamusi   M  23.0   170.0    60.0           China   
-    2   3       Gunnar Nielsen Aaby   M  24.0     NaN     NaN         Denmark   
-    3   4      Edgar Lindenau Aabye   M  34.0     NaN     NaN  Denmark/Sweden   
-    4   5  Christine Jacoba Aaftink   F  21.0   185.0    82.0     Netherlands   
-    
-       NOC        Games  Year  Season       City          Sport  \
-    0  CHN  1992 Summer  1992  Summer  Barcelona     Basketball   
-    1  CHN  2012 Summer  2012  Summer     London           Judo   
-    2  DEN  1920 Summer  1920  Summer  Antwerpen       Football   
-    3  DEN  1900 Summer  1900  Summer      Paris     Tug-Of-War   
-    4  NED  1988 Winter  1988  Winter    Calgary  Speed Skating   
-    
-                                  Event Medal      Country  
-    0       Basketball Men's Basketball   DNW        China  
-    1      Judo Men's Extra-Lightweight   DNW        China  
-    2           Football Men's Football   DNW      Denmark  
-    3       Tug-Of-War Men's Tug-Of-War  Gold      Denmark  
-    4  Speed Skating Women's 500 metres   DNW  Netherlands  
-    
-
-Do we having NOCs in olympics that are not found in the NOC master data?
+Even after merging, we find that the below NOC codes in the Olympics data had no counterpart in the NOC master data.
 
 
 ```python
+# @hidden cell
 # Do we have NOCs that didnt have a matching country in the master?
 print olympics_merge.loc[olympics_merge['Country'].isnull(),['NOC', 'Team']].drop_duplicates()
 ```
@@ -187,7 +167,7 @@ print olympics_merge.loc[olympics_merge['Country'].isnull(),['NOC', 'Team']].dro
     235895  SGP               Singapore-1
     
 
-So, we see that SGP, ROT, UNK and TUV from the olympics data find no match in the NOC master data. Looking at their 'Team' names we can manually insert the correct values into the olympics data.
+Looking at their 'Team' names we can manually insert the correct values into the olympics data.
 
 Let's put these values in Country - <br>
     1. SGP - Singapore
@@ -213,23 +193,12 @@ olympics_merge.rename(columns = {'Country': 'Team'}, inplace = True)
 
 Checking again for mapping of NOC to team we find that each is mapped to a single value! Nice!
 
-
-```python
-print olympics_merge.loc[:, ['NOC', 'Team']].drop_duplicates()['NOC'].value_counts().head()
-```
-
-    PNG    1
-    BUL    1
-    UGA    1
-    TKM    1
-    SCG    1
-    Name: NOC, dtype: int64
-    
-
 ### Merge GDP data
+To effectively study factors that affect the medal tally of a country, we need to import the Country-Year wise GDP data. THe GDP data has Country name, code, year and the GDP value. Some unnecessary columns _Indicator Name_ and _Indicator Code_ were removed. GDP data is shown below- 
 
 
 ```python
+# @hidden cell
 # Glance at the data.
 w_gdp = pd.read_csv('C:/Users/sagar/Desktop/My Work/McCombs Stuff/MSBA Courses/Data Analytics Programming/Group Project\Data\world_gdp.csv', skiprows = 3)
 
@@ -254,8 +223,6 @@ print w_gdp.head()
     4         Andorra          AND  1960           NaN
     
 
-Looking at the data we find that 'Indicator Name' and 'Indicator Code' have only one value in the entire column. We can therefore safely remove these columns from the dataset.
-
 Before we actually merge, lets check if NOCs in the olympics data match with those in the Country Code.
 
 
@@ -276,7 +243,7 @@ print len(list(set(olympics_merge['Team'].unique()) - set(w_gdp['Country Name'].
     5
     
 
-Aha! only 5! What countries are these? So maybe what I can do is, add a country code for each Team in the olympics dataset to help ease things.
+Aha! only 5! So maybe what I can do is, add a country code for each Team in the olympics dataset first and then merge using the Country Code. The data now has GDP data attached!
 
 
 ```python
@@ -298,9 +265,15 @@ olympics_merge_gdp.drop('Country Name', axis = 1, inplace = True)
 ```
 
 ### Merge Population Data
+Apart from GDP, population is also of import when looking at a countries performance. There are two train of thoughts for this - <br>
+1. Higher populations mean a bigger talent pool to choose from,
+2. Its not GDP alone but GDP per capita that decides how much resources a country has.
+
+The first five rows of the population data are shown below. This dataset has Country, year and population statistic. Again, _Indicator Code_ and _Indicator Name_ were deemed unnecessary and removed.
 
 
 ```python
+# @hidden cell
 # Read in the population data
 w_pop = pd.read_csv('C:/Users/sagar/Desktop/My Work/McCombs Stuff/MSBA Courses/Data Analytics Programming/Group Project\Data\world_pop.csv')
 
@@ -322,8 +295,11 @@ print w_pop.head()
     4      Andorra          AND  1960     13411.0
     
 
+Merging this data, we finally get a complete dataset with GDP and Population mapped. A few sample rows are shown below.
+
 
 ```python
+# @hidden cell
 olympics_complete = olympics_merge_gdp.merge(w_pop,
                                             left_on = ['Country Code', 'Year'],
                                             right_on= ['Country Code', 'Year'],
@@ -356,10 +332,11 @@ print olympics_complete.head()
     4   DNW  Netherlands          NLD  2.585680e+11  1.476009e+07  
     
 
-Checking for missing values we find - 
+There are a lot of missing values in the resulting data - this is to be attributed to the countries not found in the GDP and population masters and also the fact that Population and GDP are only for 1961 onwards while Olympics data is from 1896. Therefore, let's consider only data from 1961 onwards.
 
 
 ```python
+# @hidden cell
 print olympics_complete.isnull().sum()
 ```
 
@@ -384,10 +361,9 @@ print olympics_complete.isnull().sum()
     dtype: int64
     
 
-There are a lot of missing values in the data, this is to be attributed to the countries not found in the GDP and population masters and also the fact that Population and GDP are only for 1961 onwards while Olympics data is from 1896.
-
 
 ```python
+# @hidden cell
 # Lets take data from 1961 onwards only and for summer olympics only
 olympics_complete_subset = olympics_complete.loc[(olympics_complete['Year'] > 1960) & (olympics_complete['Season'] == "Summer"), :]
 
@@ -395,7 +371,7 @@ olympics_complete_subset = olympics_complete.loc[(olympics_complete['Year'] > 19
 olympics_complete_subset = olympics_complete_subset.reset_index()
 ```
 
-### Data Visualization
+### Exploratory Data Analysis
 
 #### Who has the most medals across all editions of the olympics?
 Medal tally is the sum of all medals won.
@@ -443,17 +419,24 @@ remove_sports = ["Gymnastics Women's Balance Beam", "Gymnastics Men's Horizontal
 team_sports = list(set(team_sports) - set(remove_sports))
 ```
 
-The next thing we need to do is add a column in the dataset that correctly identifies whether the event in the given record is a team event.
+The next thing we need to do is add a column in the dataset that correctly identifies whether the event in the given record is a team event or a single event. We then use this column to correctly calculate the medal tally for each country.
 
 
 ```python
+# if an event name matches with one in team sports, then it is a team event. Others are singles events.
 team_event_mask = olympics_complete_subset['Event'].map(lambda x: x in team_sports)
 single_event_mask = [not i for i in team_event_mask]
 
+# rows where medal_won is 1
 medal_mask = olympics_complete_subset['Medal_Won'] == 1
 
+# Put 1 under team event if medal is won and event in team event list
 olympics_complete_subset['Team_Event'] = np.where(team_event_mask & medal_mask, 1, 0)
+
+# Put 1 under singles event if medal is won and event not in team event list
 olympics_complete_subset['Single_Event'] = np.where(single_event_mask & medal_mask, 1, 0)
+
+# Add an identifier for team/single event
 olympics_complete_subset['Event_Category'] = olympics_complete_subset['Single_Event'] + \
 olympics_complete_subset['Team_Event']
 ```
@@ -469,10 +452,11 @@ agg('sum').reset_index()
 medal_tally_agnostic['Medal_Won_Corrected'] = medal_tally_agnostic['Medal_Won']/medal_tally_agnostic['Event_Category']
 ```
 
-Who are the greatest olympics playing nations of all time? With the corrected data, lets make a pivot table to find out!
+Who are the greatest olympics playing nations of all time? With the corrected data, lets find out the total medal tally of the top 4 countries from 1964 to 2016!
 
 
 ```python
+# @hidden cell
 # Medal Tally.
 medal_tally = medal_tally_agnostic.groupby(['Year','Team'])['Medal_Won_Corrected'].agg('sum').reset_index()
 
@@ -499,6 +483,7 @@ print medal_tally_pivot.loc[:,'All']
 
 
 ```python
+# @hidden cell
 # List of top countries
 top_countries = ['USA', 'Russia', 'Germany', 'China']
 
