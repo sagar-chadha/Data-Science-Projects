@@ -11,7 +11,6 @@ With our weapons ready, its time to see who's BOSS!
 
 
 ```python
-# @hidden_cell
 import pandas as pd
 import numpy as np
 %pylab inline
@@ -24,7 +23,6 @@ The first five rows of the olympics data are shown below. We have 271,116 rows a
 
 
 ```python
-# @hidden cell
 olympics = pd.read_csv('C:/Users/sagar/Desktop/My Work/McCombs Stuff/MSBA Courses/Data Analytics Programming/Group Project/Data/athlete_events.csv')
 print olympics.shape
 print olympics.head()
@@ -60,7 +58,6 @@ Printing column wise missing values we get-
 
 
 ```python
-# @hidden cell
 print olympics.isnull().sum()
 ```
 
@@ -108,18 +105,10 @@ print olympics.loc[:, ['NOC', 'Team']].drop_duplicates()['NOC'].value_counts().h
 
 Hmm, This looks interesting. So NOC code 'FRA' is associated with 160 teams? That sounds prepostorous! Let's use a master of NOC to country mapping to correct this.
 
-
-```python
-#olympics_NOC_Team = olympics.groupby(['NOC', 'Team'])[['Medal']].agg('count').reset_index()
-
-#print len(olympics_NOC_Team.loc[olympics_NOC_Team['NOC'] == 'FRA', :])
-```
-
 The NOC data has the NOC code and the corresponding Country Name. The first five rows of the data are shown below -
 
 
 ```python
-# @hidden cell
 # Lets read in the noc_country mapping first
 noc_country = pd.read_csv('C:/Users/sagar/Desktop/My Work/McCombs Stuff/MSBA Courses/Data Analytics Programming/Group Project/Data/noc_regions.csv')
 noc_country.drop('notes', axis = 1 , inplace = True)
@@ -151,7 +140,6 @@ Even after merging, we find that the below NOC codes in the Olympics data had no
 
 
 ```python
-# @hidden cell
 # Do we have NOCs that didnt have a matching country in the master?
 print olympics_merge.loc[olympics_merge['Country'].isnull(),['NOC', 'Team']].drop_duplicates()
 ```
@@ -198,7 +186,6 @@ To effectively study factors that affect the medal tally of a country, we need t
 
 
 ```python
-# @hidden cell
 # Glance at the data.
 w_gdp = pd.read_csv('C:/Users/sagar/Desktop/My Work/McCombs Stuff/MSBA Courses/Data Analytics Programming/Group Project\Data\world_gdp.csv', skiprows = 3)
 
@@ -273,7 +260,6 @@ The first five rows of the population data are shown below. This dataset has Cou
 
 
 ```python
-# @hidden cell
 # Read in the population data
 w_pop = pd.read_csv('C:/Users/sagar/Desktop/My Work/McCombs Stuff/MSBA Courses/Data Analytics Programming/Group Project\Data\world_pop.csv')
 
@@ -299,7 +285,7 @@ Merging this data, we finally get a complete dataset with GDP and Population map
 
 
 ```python
-# @hidden cell
+# Merge olympics+GDP with population data
 olympics_complete = olympics_merge_gdp.merge(w_pop,
                                             left_on = ['Country Code', 'Year'],
                                             right_on= ['Country Code', 'Year'],
@@ -336,7 +322,6 @@ There are a lot of missing values in the resulting data - this is to be attribut
 
 
 ```python
-# @hidden cell
 print olympics_complete.isnull().sum()
 ```
 
@@ -363,7 +348,6 @@ print olympics_complete.isnull().sum()
 
 
 ```python
-# @hidden cell
 # Lets take data from 1961 onwards only and for summer olympics only
 olympics_complete_subset = olympics_complete.loc[(olympics_complete['Year'] > 1960) & (olympics_complete['Season'] == "Summer"), :]
 
@@ -456,7 +440,6 @@ Who are the greatest olympics playing nations of all time? With the corrected da
 
 
 ```python
-# @hidden cell
 # Medal Tally.
 medal_tally = medal_tally_agnostic.groupby(['Year','Team'])['Medal_Won_Corrected'].agg('sum').reset_index()
 
@@ -483,7 +466,6 @@ print medal_tally_pivot.loc[:,'All']
 
 
 ```python
-# @hidden cell
 # List of top countries
 top_countries = ['USA', 'Russia', 'Germany', 'China']
 
@@ -508,7 +490,7 @@ title('Olympic Performance Comparison')
 
 
 
-![png](ExploringtheOlympicsData_files/ExploringtheOlympicsData_53_1.png)
+![png](ExploringtheOlympicsData_files/ExploringtheOlympicsData_52_1.png)
 
 
 **Interesting Insight 1**: The blank value at 1980 for USA and China is not a data error! In 1980, the United States led a boycott of the Summer Olympic Games in Moscow to protest the late 1979 Soviet invasion of Afghanistan. In total, 65 nations refused to participate in the games, whereas 80 countries sent athletes to compete, India being one of those.
@@ -551,7 +533,7 @@ ylabel('Country')
 
 
 
-![png](ExploringtheOlympicsData_files/ExploringtheOlympicsData_56_1.png)
+![png](ExploringtheOlympicsData_files/ExploringtheOlympicsData_55_1.png)
 
 
 Surprisingly, countries are also in order of gold medal tallies!
@@ -653,6 +635,13 @@ usa_data = year_team_gender_count[year_team_gender_count['Team'] == "USA"]
 usa_data.set_index('Year', inplace = True)
 ```
 
+    C:\Users\sagar\Anaconda2\lib\site-packages\pandas\core\frame.py:3787: SettingWithCopyWarning: 
+    A value is trying to be set on a copy of a slice from a DataFrame
+    
+    See the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy
+      downcast=downcast, **kwargs)
+    
+
 Plotting the contingent size with male and female athletes respectively for each country.
 
 
@@ -701,7 +690,7 @@ show()
 ```
 
 
-![png](ExploringtheOlympicsData_files/ExploringtheOlympicsData_67_0.png)
+![png](ExploringtheOlympicsData_files/ExploringtheOlympicsData_66_0.png)
 
 
 ### Does the size of the contingent relate with the number of medals?
@@ -776,7 +765,7 @@ show()
 ```
 
 
-![png](ExploringtheOlympicsData_files/ExploringtheOlympicsData_69_0.png)
+![png](ExploringtheOlympicsData_files/ExploringtheOlympicsData_68_0.png)
 
 
 
@@ -1231,7 +1220,7 @@ text(np.nanpercentile(medal_tally_gdp['GDP'], 99.6),
 
 
 
-![png](ExploringtheOlympicsData_files/ExploringtheOlympicsData_86_1.png)
+![png](ExploringtheOlympicsData_files/ExploringtheOlympicsData_85_1.png)
 
 
 The plot shows a 0.622 correlation between GDP and medals won! Thats a significant correlation. **So GDP positively impacts the number of medals won by a team.**
@@ -2087,7 +2076,7 @@ ax2.set_title('Population Distribution')
 
 
 
-![png](ExploringtheOlympicsData_files/ExploringtheOlympicsData_101_1.png)
+![png](ExploringtheOlympicsData_files/ExploringtheOlympicsData_100_1.png)
 
 
 The charts show that these variables are highly skewed. It would do better to do a logarithmic transform of these for better fit in the linear model.
@@ -2119,8 +2108,8 @@ print result.summary()
     Dep. Variable:     Medal_Won_Corrected   R-squared:                       0.755
     Model:                             OLS   Adj. R-squared:                  0.754
     Method:                  Least Squares   F-statistic:                     1178.
-    Date:                 Thu, 09 Aug 2018   Prob (F-statistic):               0.00
-    Time:                         20:37:22   Log-Likelihood:                -6493.1
+    Date:                 Sun, 12 Aug 2018   Prob (F-statistic):               0.00
+    Time:                         00:42:59   Log-Likelihood:                -6493.1
     No. Observations:                 1920   AIC:                         1.300e+04
     Df Residuals:                     1914   BIC:                         1.303e+04
     Df Model:                            5                                         
@@ -2218,7 +2207,7 @@ ax2.set_ylabel('Height')
 
 
 
-![png](ExploringtheOlympicsData_files/ExploringtheOlympicsData_113_1.png)
+![png](ExploringtheOlympicsData_files/ExploringtheOlympicsData_112_1.png)
 
 
 Lets see how well we can predict Weightlifting given height and weight.
@@ -2260,7 +2249,7 @@ for train, holdout in kfold:
 print np.mean(accuracies)
 ```
 
-    0.969052121284
+    0.969362274493
     
 
 The above accuracies show that given a height and weight I can predict the sport as being or not being weightlifting with 96% accuracy! This was because the weightlifters were so clearly visibile as separate on the weight/height scatterplot.
@@ -2302,7 +2291,7 @@ for train, holdout in kfold:
 print np.mean(accuracies)
 ```
 
-    0.859579885513
+    0.858976890238
     
 
 Wow! We get 86% accurate predictions with k-nearest neighbors while predicting athletics.
