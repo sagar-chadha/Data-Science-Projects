@@ -15,4 +15,4 @@ Apart from helping satiate my hunger for the truth, this project helped me learn
 * Linear regression using Python
 * KNN classifier
 
-Hope this motivates you to perform data analyses on a dataset of your choosing.
+Hope this motivates you to perform data analyses on a dataset of your choosing. The `ExploringTheOlympicsData.ipynb` file has the code I used to perform my analysis. I used Jupyter notebook and Python 2.7.
