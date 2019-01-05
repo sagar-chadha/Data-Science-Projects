@@ -1,4 +1,7 @@
-# My Data Science Projects
-This repository will hold my personal data science projects!
+# Data Science Projects
+
+Welcome!
+
+This repository will hold all my data science projects undertaken personally or as part of my curriculum at UT.
 
 Cheers!
