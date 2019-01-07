@@ -12,7 +12,7 @@ The challenge was to build a model that predicts the total ride duration of taxi
 
 The results were evaluated using the RMSLE (Root Mean Square Logarithmic Error). RMSLE is calculated using - 
 
-![Screenshot](https://github.com/sagar-chadha/NYC-Taxi-duration/blob/master/formula.PNG)
+![Screenshot](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/NYC-Taxi-Duration/formula.PNG)
 
 As per this evaluation metric, I had a RMSLE score on the private leaderboard of 0.475 while the winning solution had a score of 0.289.
 
