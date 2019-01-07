@@ -85,7 +85,11 @@ Missing values
     ## store_and_fwd_flag      trip_duration 
     ##                  0                  0
 
-<br> <br> \* Missing values in the test data.
+<br>
+
+-   Missing values in the test data.
+
+<!-- -->
 
     ##                 id          vendor_id    pickup_datetime 
     ##                  0                  0                  0 
@@ -122,15 +126,17 @@ Let’s look at a few rows of data and gather what we have.
     ## 4         40.70672                  N           429
     ## 5         40.78252                  N           435
 
-We see that we have the following variables - <br> \* `id` - Trip ID.
-This wont be useful for the purpose of prediction. \* `pickup_datetime`,
-`dropoff_datetime` - Time for pickup and dropoff of passengers. \*
-`passenger_count` - count of passengers in the vehicle. Larger number of
-passengers may highlight a cab sharing arrangement and could be
-indicative of larger trip times. \* `pickup_longitude`,
-`pickup_latitude` - location of the pickup. \* `dropoff_longitude`,
-`dropoff_latitude` - location of the drop. \* `trip_duration` - duration
-of the cab ride in seconds.
+We see that we have the following variables - <br>
+
+-   `id` - Trip ID. This wont be useful for the purpose of prediction.
+-   `pickup_datetime`, `dropoff_datetime` - Time for pickup and dropoff
+    of passengers.
+-   `passenger_count` - count of passengers in the vehicle. Larger
+    number of passengers may highlight a cab sharing arrangement and
+    could be indicative of larger trip times.
+-   `pickup_longitude`, `pickup_latitude` - location of the pickup.
+-   `dropoff_longitude`, `dropoff_latitude` - location of the drop.
+-   `trip_duration` - duration of the cab ride in seconds.
 
 Let’s look at some of the variables in more detail - <br>
 
