@@ -161,6 +161,8 @@ train <- train %>% filter(trip_duration <= quantile(train$trip_duration, 0.99))
 We are left with 1444069 rows in the resulting dataset. These are still
 enough datapoints for an efficient analysis. <br>
 
+1.  `pickup_datetime`, `dropoff_datetime`
+
 Next let’s convert to datetime the date/time variables that are
 currently encoded as character.
 
@@ -438,7 +440,12 @@ Can we get a sense of average speed of the vehicle between destinations?
 ``` r
 ggplot(data = train, mapping = aes(x = distance, y = trip_duration))+
   geom_point()+
-  theme_minimal()
+  theme_minimal() +
+  labs(
+    x = "Distance",
+    y = "Trip Duration",
+    title = "Trip Duration vs Distance"
+  )
 ```
 
 ![](NYC_Taxi_Duration_New_files/figure-markdown_github/unnamed-chunk-26-1.png)
