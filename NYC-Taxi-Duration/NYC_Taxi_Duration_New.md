@@ -279,3 +279,180 @@ test <- test %>%
                                             hour(pickup_datetime)>17 &
                                             hour(pickup_datetime)<22, 1, 0))))
 ```
+
+### Add identifiers for major holidays.
+
+Holidays will see unusual traffic too. We will add a binary variable to
+identify major holidays in NYC between 1st January 2016 to 30th June
+2016.
+
+``` r
+holidays <- as.Date(c("2016-01-01", "2016-01-18", "2016-02-12", "2016-02-15",
+                      "2016-05-08", "2016-05-30", "2016-06-19"))
+
+train <- train %>% 
+  mutate(Holiday_YN = case_when(as.Date(pickup_datetime) %in% holidays ~ 1,
+                                TRUE ~ 0))
+
+test <- test %>% 
+  mutate(Holiday_YN = case_when(as.Date(pickup_datetime) %in% holidays ~ 1,
+                                               TRUE ~ 0))
+```
+
+### Time of the day
+
+Traffic is less early mornings and late nights, while it is heavy in the
+morning and early evening. Therefore, capturing time as a categorical
+variable with the aforementioned levels should help in predicting the
+time taken for a ride to complete.
+
+``` r
+train <- train %>% 
+  mutate(Time_of_Day = ifelse(hour(pickup_datetime) >= 0 & 
+                                hour(pickup_datetime) < 6,"Early Morning",
+                              ifelse(hour(pickup_datetime) >= 6 & 
+                                       hour(pickup_datetime) < 12,"Morning",
+                                     ifelse(hour(pickup_datetime) >= 12 & 
+                                              hour(pickup_datetime) < 18, "Afternoon", 
+                                            "Night"))))
+
+test <- test %>% 
+  mutate(Time_of_Day = ifelse(hour(pickup_datetime) >= 0 & 
+                                hour(pickup_datetime) < 6,"Early Morning",
+                              ifelse(hour(pickup_datetime) >= 6 & 
+                                       hour(pickup_datetime) < 12,"Morning",
+                                     ifelse(hour(pickup_datetime) >= 12 &
+                                              hour(pickup_datetime) < 18, "Afternoon", 
+                                            "Night"))))
+```
+
+### Frequency of pickups and dropoffs at locations.
+
+If there are a large number of pickups and dropoffs at a location, then
+the ride times are bound to be on the higher side.
+
+``` r
+pickup_dropff_locations <- rbind(train[,c("pickup_longitude","pickup_latitude",
+                                          "dropoff_longitude", "dropoff_latitude")], 
+                                 test[,c("pickup_longitude","pickup_latitude",
+                                         "dropoff_longitude", "dropoff_latitude")])
+
+pickup_frequency <- pickup_dropff_locations %>% 
+  group_by(pickup_longitude, pickup_latitude) %>% 
+  dplyr::summarise(Pickup_Address_Frequency = n()) %>%
+  arrange(desc(Pickup_Address_Frequency))
+
+dropoff_frequency <- pickup_dropff_locations %>% 
+  group_by(dropoff_longitude, dropoff_latitude) %>% 
+  dplyr::summarise(Dropoff_Address_Frequency = n()) %>%
+  arrange(desc(Dropoff_Address_Frequency))
+
+train2 <- left_join(train, pickup_frequency, by = c("pickup_longitude" = "pickup_longitude", "pickup_latitude" = "pickup_latitude"))
+
+train3 <- left_join(train2, dropoff_frequency, by = c("dropoff_longitude" = "dropoff_longitude", "dropoff_latitude" = "dropoff_latitude"))
+
+test2 <- left_join(test, pickup_frequency, by = c("pickup_longitude" = "pickup_longitude", "pickup_latitude" = "pickup_latitude"))
+
+test3 <- left_join(test2, dropoff_frequency, by = c("dropoff_longitude" = "dropoff_longitude", "dropoff_latitude" = "dropoff_latitude"))
+```
+
+### Log Transform the trip duration and distance variables
+
+The `distance` and `trip_duration` variables have a skewed distribution.
+Let’s use a log transform to bring the distributions closer to normal.
+
+``` r
+ggplot(train) +
+  geom_histogram(mapping = aes(x = trip_duration), alpha = 0.7) +
+  labs(x = "Trip duration",
+       y = "Frequency",
+       title = "Histogram of Trip Duration")
+```
+
+    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+
+![](NYC_Taxi_Duration_New_files/figure-markdown_github/unnamed-chunk-20-1.png)
+
+``` r
+# add log transform of trip duration variable and distance variable
+train <- train %>% mutate(logtrip_duration = log1p(trip_duration))
+train <- train %>% mutate(log_distance = log1p(distance))
+test <- test %>% mutate(log_distance = log1p(distance))
+```
+
+We see below that the log transformed variables have a distribution
+closer to normal than the original variables.
+
+``` r
+ggplot(train) +
+  geom_histogram(mapping = aes(x = logtrip_duration), alpha = 0.7) +
+  labs(x = "Log of trip duration",
+       y = "Frequency",
+       title = "Histogram of Log Trip Duration")
+```
+
+    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+
+![](NYC_Taxi_Duration_New_files/figure-markdown_github/unnamed-chunk-22-1.png)
+
+``` r
+ggplot(train) +
+  geom_histogram(mapping = aes(x = log_distance), alpha = 0.7) +
+  labs(x = "Log of trip distance",
+       y = "Frequency",
+       title = "Histogram of Log Trip distance")
+```
+
+    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+
+![](NYC_Taxi_Duration_New_files/figure-markdown_github/unnamed-chunk-23-1.png)
+
+### Distance 0 means ride cancellation.
+
+Lets build a variable that captures the fact. This would help the model
+keep trip durations small when the distance is very small or 0.
+
+``` r
+train <- train %>% mutate(CancelYN = ifelse(log_distance == 0,1,0))
+test <- test %>% mutate(CancelYN = ifelse(log_distance == 0,1,0))
+```
+
+### Convert categorical variables to factors.
+
+``` r
+train <- train %>% mutate(vendor_id = as.factor(vendor_id),
+                          store_and_fwd_flag = as.factor(store_and_fwd_flag),
+                          Pickup_Day_Name = as.factor(Pickup_Day_Name),
+                          Time_of_Day = as.factor(Time_of_Day))
+
+test <- test %>% mutate(vendor_id = as.factor(vendor_id),
+                        store_and_fwd_flag = as.factor(store_and_fwd_flag),
+                        Pickup_Day_Name = as.factor(Pickup_Day_Name),
+                        Time_of_Day = as.factor(Time_of_Day))
+```
+
+### Plot of trip distance with duration.
+
+Can we get a sense of average speed of the vehicle between destinations?
+
+``` r
+ggplot(data = train, mapping = aes(x = distance, y = trip_duration))+
+  geom_point()+
+  theme_minimal()
+```
+
+![](NYC_Taxi_Duration_New_files/figure-markdown_github/unnamed-chunk-26-1.png)
+
+We see many outliers here with very large distance but trip durations
+very less.Let’s calculate speed to get an estimate of the outliers.
+
+``` r
+train <- train %>% mutate(Vehicle_Speed = distance*3600/trip_duration)
+
+outliers1 <- which(train$Vehicle_Speed > 100)
+outliers2 <- which(train$Vehicle_Speed < 1)
+
+# correcting the dataset
+train <- train[-outliers1,]
+train <- train[-outliers2,]
+```
