@@ -1,6 +1,6 @@
 ## NYC Taxi Duration Prediction
 
-![Screenshot](https://github.com/sagar-chadha/NYC-Taxi-duration/blob/master/NYC%20Taxi.jpeg)
+![Screenshot](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/NYC-Taxi-Duration/NYC%20Taxi.jpeg)
 
 This code represents my submission code for the [competition](https://www.kaggle.com/c/nyc-taxi-trip-duration) by the same name hosted by Kaggle. Overall I stood 747th out of 1257 teams on the Public Leaderboard. It was one of my forays into the world of predictive analytics using R and I learnt a lot from it.
 
