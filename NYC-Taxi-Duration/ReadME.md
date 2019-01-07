@@ -2,11 +2,11 @@
 
 ![Screenshot](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/NYC-Taxi-Duration/NYC%20Taxi.jpeg)
 
-This code represents my submission code for the [competition](https://www.kaggle.com/c/nyc-taxi-trip-duration) by the same name hosted by Kaggle. Overall I stood 747th out of 1257 teams on the Public Leaderboard. It was one of my forays into the world of predictive analytics using R and I learnt a lot from it.
+The code here represents my final submission for the [competition](https://www.kaggle.com/c/nyc-taxi-trip-duration) by the same name hosted on Kaggle. I took up this project out of curiosity back when R was still the leading programming language for data science. It is one of my first attempts at predictive analytics - just an outlet for what I was learning about machine learning through an online course.
 
 ### The Problem
 
-The challenge was to build a model that predicts the total ride duration of taxi trips in New York City. The dataset was released by the NYC Taxi and Limousine Commission, which includes pickup time, geo-coordinates, number of passengers, and several other variables.
+The challenge was to build a model that predicts the total ride duration of taxi trips in New York City. The dataset was released by the NYC Taxi and Limousine Commission, and includes pickup time, geo-coordinates, number of passengers, and several other variables.
 
 ### Evaluation
 
@@ -14,7 +14,7 @@ The results were evaluated using the RMSLE (Root Mean Square Logarithmic Error).
 
 ![Screenshot](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/NYC-Taxi-Duration/formula.PNG)
 
-As per this evaluation metric, I had a RMSLE score on the private leaderboard of 0.475 while the winning solution had a score of 0.289.
+As per this evaluation metric, I had an RMSLE score on the private leaderboard of 0.475 while the winning solution had a score of 0.289. Overall I stood 747th out of 1257 teams on the Public Leaderboard. Not bad for a first attempt. :)
 
 ### Solution Approach
 
@@ -41,4 +41,6 @@ I tried a very basic linear regression model and boosted regression models using
 
 ### What I Learnt
 
-This being my first experience with a prediction problem, I faced a lot of challenges on the way. The biggest challenge for me was efficient manipulation of data and feature engineering. Going through others' attempts on Kaggle showed me quite a few neat tricks for doing this that I managed to incorporate in my code as well. In the end I realised that most of my code revolves only around data manipulation, cleaning, etc. forever solidifying in my mind that it is indeed data cleaning that takes up most of the time in such projects.
+This being my first experience with a prediction problem, I faced a lot of challenges on the way. The biggest learning for me was efficient manipulation of data and feature engineering. Going through the code posted by others on Kaggle showed me quite a few neat tricks that I managed to incorporate in my code as well. The two most important lessons from this project were - <br>
+    1. Data cleaning and manipulation take up most of the time in tasks like these (I had only heard about this till then). <br>
+    2. Comments are critical for understanding code. I learnt this after I had a hard time picking up where I had left off after even a few days gap.
