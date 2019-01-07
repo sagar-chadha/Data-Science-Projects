@@ -1,4 +1,4 @@
-## NYC Taxi Duration Prediction
+## NYC Taxi Trip Duration Prediction
 
 ![Screenshot](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/NYC-Taxi-Duration/NYC%20Taxi.jpeg)
 
