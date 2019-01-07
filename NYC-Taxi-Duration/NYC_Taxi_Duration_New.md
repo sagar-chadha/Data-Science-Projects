@@ -1,9 +1,17 @@
+NYC Taxi Trip Duration Challenge
+================================
+
+The task at hand is to predict taxi trip durations in NYC using
+variables such as pickup time, geo-coordinates, number of passengers,
+etc.
+
 Data Import
 -----------
 
 Let’s read in the training and testing data files. We will use the
 stringsAsFactors FALSE since we don’t want all the strings to be
-converted to factor variables.
+converted to factor variables as some of the date columns would be
+stored as characters too.
 
 ``` r
 test <- read.csv('test.csv', header = TRUE, stringsAsFactors = FALSE)
@@ -12,10 +20,6 @@ train <- read.csv('train.csv', header = TRUE, stringsAsFactors = FALSE)
 
 What do the datasets look like?
 -------------------------------
-
-``` r
-glimpse(train)
-```
 
     ## Observations: 1,458,644
     ## Variables: 11
@@ -31,9 +35,7 @@ glimpse(train)
     ## $ store_and_fwd_flag <chr> "N", "N", "N", "N", "N", "N", "N", "N", "N"...
     ## $ trip_duration      <int> 455, 663, 2124, 429, 435, 443, 341, 1551, 2...
 
-``` r
-glimpse(test)
-```
+    ## [1] "The structure of the training data is shown below - "
 
     ## Observations: 625,134
     ## Variables: 9
@@ -47,11 +49,13 @@ glimpse(test)
     ## $ dropoff_latitude   <dbl> 40.75668, 40.65540, 40.72952, 40.73047, 40....
     ## $ store_and_fwd_flag <chr> "N", "N", "N", "N", "N", "N", "N", "N", "N"...
 
+    ## [1] "The structure of the test data is shown below - "
+
 We see that we have a LOT of training and testing data - around
 1,458,644 observations in the training data and 625,134 observations in
 the test data. Two variables present in the train data are not present
 in the test data - these are `dropoff_datetime` and the output variable
-- `trip_duration`. <br>
+`trip_duration`. <br>
 
 Let’s add these variables with the value 0 in the test data for
 consistency.
