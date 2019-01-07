@@ -186,3 +186,96 @@ We are given the latitude and longitude for the pickup and dropoff
 locations. Let’s use these to calculate the distances between the pickup
 and dropoff points. This will aid analysis as longer distances would
 generally take a longer time.
+
+``` r
+# function to convert degrees to radians
+deg2rad <- function(x) {return(x*pi/180)}
+
+# calculate distances from lat-lon combinations
+
+train <- train %>% mutate(
+  dropoff_latitude_rad = deg2rad(dropoff_latitude),
+  dropoff_longitude_rad = deg2rad(dropoff_longitude),
+  pickup_latitude_rad = deg2rad(pickup_latitude),
+  pickup_longitude_rad = deg2rad(pickup_longitude),
+  dlon = dropoff_longitude_rad - pickup_longitude_rad,
+  dlat = dropoff_latitude_rad - pickup_latitude_rad,
+  a = (sin(dlat/2))^2 + cos(pickup_latitude_rad) * cos(dropoff_latitude_rad) * (sin(dlon/2))^2,
+  c = 2 * atan2(sqrt(a), sqrt(1-a)),
+  distance = c * 6373)
+
+# remove unnecessary variables
+train <- train %>% select(-c(dlon, dlat,a,c))
+
+test <- test %>% mutate(
+  dropoff_latitude_rad = deg2rad(dropoff_latitude),
+  dropoff_longitude_rad = deg2rad(dropoff_longitude),
+  pickup_latitude_rad = deg2rad(pickup_latitude),
+  pickup_longitude_rad = deg2rad(pickup_longitude),
+  dlon = dropoff_longitude_rad - pickup_longitude_rad,
+  dlat = dropoff_latitude_rad - pickup_latitude_rad,
+  a = (sin(dlat/2))^2 + cos(pickup_latitude_rad) * cos(dropoff_latitude_rad) * (sin(dlon/2))^2,
+  c = 2 * atan2(sqrt(a), sqrt(1-a)),
+  distance = c * 6373)
+
+test <- test %>% select(-c(dlon, dlat,a,c))
+```
+
+### Day of the week when pickup happens.
+
+we have data from 1st January 2016 to 30th June 2016. Let’s get the
+weekdays corresponding to the dates. This matters because traffic
+conditions vary in an area based on day of the week as well as time of
+the day. These in turn affect the times taken to complete a trip.
+
+``` r
+train$Pickup_Day_Name <- weekdays(train$pickup_datetime)
+
+test$Pickup_Day_Name <- weekdays(test$pickup_datetime)
+```
+
+### Identifier for weekdays and weekends.
+
+Weekdays and weekends have different traffic patterns. Let’s create an
+identifier for this.
+
+``` r
+train <- train %>% 
+  mutate(Weekday_YN = case_when(Pickup_Day_Name %in% c("Saturday","Sunday") ~ 0,
+                                TRUE ~ 1))
+
+test <- test %>% 
+  mutate(Weekday_YN = case_when(Pickup_Day_Name %in% c("Saturday","Sunday") ~ 0,
+                                TRUE ~ 1))
+```
+
+### Rush hour identifier
+
+Weekday rush hours are expected to get more traffic and higher trip
+durations. Rush hours are usually from 8-10am and 6-9 pm. Expected rush
+hours on weekends in the evening 6 to 9pm when people usually start
+going out!
+
+``` r
+train <- train %>% 
+  mutate(Rush_Hour = ifelse(Weekday_YN == 1 & 
+                              hour(pickup_datetime)>17 & 
+                              hour(pickup_datetime)<22,1, 
+                            ifelse(Weekday_YN == 1 & 
+                                     hour(pickup_datetime)>7 & 
+                                     hour(pickup_datetime)<11,1,
+                                   ifelse(Weekday_YN == 0 & 
+                                            hour(pickup_datetime)>17 & 
+                                            hour(pickup_datetime)<22, 1, 0))))
+
+test <- test %>% 
+  mutate(Rush_Hour = ifelse(Weekday_YN == 1 & 
+                              hour(pickup_datetime)>17 & 
+                              hour(pickup_datetime)<22,1,
+                            ifelse(Weekday_YN == 1 & 
+                                     hour(pickup_datetime)>7 & 
+                                     hour(pickup_datetime)<11,1,
+                                   ifelse(Weekday_YN == 0 & 
+                                            hour(pickup_datetime)>17 &
+                                            hour(pickup_datetime)<22, 1, 0))))
+```
