@@ -44,3 +44,6 @@ I tried a very basic linear regression model and boosted regression models using
 This being my first experience with a prediction problem, I faced a lot of challenges on the way. The biggest learning for me was efficient manipulation of data and feature engineering. Going through the code posted by others on Kaggle showed me quite a few neat tricks that I managed to incorporate in my code as well. The two most important lessons from this project were - <br>
     1. Data cleaning and manipulation take up most of the time in tasks like these (I had only heard about this till then). <br>
     2. Comments are critical for understanding code. I learnt this after I had a hard time picking up where I had left off after even a few days gap.
+
+### File Structure
+The `NYC_Taxi_Trip_Duration.Rmd` file is the R Notebook with the code I used to perform my analysis. `NYC_Taxi_Trip_Duration.md` is the neatly formatted markdown file with the complete analysis.
