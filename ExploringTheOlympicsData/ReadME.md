@@ -21,8 +21,8 @@ One thing I learnt that I really didn't need data for is that I, being an Indian
 * In 1980, the United States led a boycott of the Summer Olympic Games in Moscow to protest the late 1979 Soviet invasion of Afghanistan. In total, 65 nations refused to participate in the games, whereas 80 countries sent athletes to compete, India being one of those.
 * The boycott of the 1984 Summer Olympics in Los Angeles followed four years after the U.S.-led boycott of the 1980 Summer Olympics in Moscow. The boycott involved 14 Eastern Bloc countries and allies, led by the Soviet Union, which initiated the boycott on May 8, 1984.
 * Medal tallies for various sporting events show that the Chinese are good at diving - both men and women, Germans excel at equestrian sports, Russians likes to wrestle and Americans likes to swim.
-* Each of the top 4 medal winners have very little in common in terms of sports that they excel at. It is perhaps why these are all at the top. Each competes and wins in its own area of expertise.
-... and many more!
+* Each of the top 4 medal winners have very little in common in terms of sports that they excel at. It is perhaps why these are all at the top. Each competes and wins in its own area of expertise. <br>
+... and much more!
 
 ### Repository Structure
 The `ExploringTheOlympicsData.ipynb` file has the code I used to perform my analysis. I used Jupyter notebook and Python 2.7.
