@@ -490,7 +490,7 @@ title('Olympic Performance Comparison')
 
 
 
-![png](ExploringtheOlympicsData_files/ExploringtheOlympicsData_52_1.png)
+![png](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/Repository%20Files/ExploringTheOlympicsData/ExploringtheOlympicsData_files/ExploringtheOlympicsData_52_1.png)
 
 
 **Interesting Insight 1**: The blank value at 1980 for USA and China is not a data error! In 1980, the United States led a boycott of the Summer Olympic Games in Moscow to protest the late 1979 Soviet invasion of Afghanistan. In total, 65 nations refused to participate in the games, whereas 80 countries sent athletes to compete, India being one of those.
@@ -533,7 +533,7 @@ ylabel('Country')
 
 
 
-![png](ExploringtheOlympicsData_files/ExploringtheOlympicsData_55_1.png)
+![png](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/Repository%20Files/ExploringTheOlympicsData/ExploringtheOlympicsData_files/ExploringtheOlympicsData_55_1.png)
 
 
 Surprisingly, countries are also in order of gold medal tallies!
@@ -690,7 +690,7 @@ show()
 ```
 
 
-![png](ExploringtheOlympicsData_files/ExploringtheOlympicsData_66_0.png)
+![png](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/Repository%20Files/ExploringTheOlympicsData/ExploringtheOlympicsData_files/ExploringtheOlympicsData_66_0.png)
 
 
 ### Does the size of the contingent relate with the number of medals?
@@ -765,7 +765,7 @@ show()
 ```
 
 
-![png](ExploringtheOlympicsData_files/ExploringtheOlympicsData_68_0.png)
+![png](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/Repository%20Files/ExploringTheOlympicsData/ExploringtheOlympicsData_files/ExploringtheOlympicsData_68_0.png)
 
 
 
@@ -1220,7 +1220,7 @@ text(np.nanpercentile(medal_tally_gdp['GDP'], 99.6),
 
 
 
-![png](ExploringtheOlympicsData_files/ExploringtheOlympicsData_85_1.png)
+![png](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/Repository%20Files/ExploringTheOlympicsData/ExploringtheOlympicsData_files/ExploringtheOlympicsData_85_1.png)
 
 
 The plot shows a 0.622 correlation between GDP and medals won! Thats a significant correlation. **So GDP positively impacts the number of medals won by a team.**
@@ -2076,7 +2076,7 @@ ax2.set_title('Population Distribution')
 
 
 
-![png](ExploringtheOlympicsData_files/ExploringtheOlympicsData_100_1.png)
+![png](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/Repository%20Files/ExploringTheOlympicsData/ExploringtheOlympicsData_files/ExploringtheOlympicsData_100_1.png)
 
 
 The charts show that these variables are highly skewed. It would do better to do a logarithmic transform of these for better fit in the linear model.
@@ -2207,7 +2207,7 @@ ax2.set_ylabel('Height')
 
 
 
-![png](ExploringtheOlympicsData_files/ExploringtheOlympicsData_112_1.png)
+![png](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/Repository%20Files/ExploringTheOlympicsData/ExploringtheOlympicsData_files/ExploringtheOlympicsData_112_1.png)
 
 
 Lets see how well we can predict Weightlifting given height and weight.
