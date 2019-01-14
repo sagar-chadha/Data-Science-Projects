@@ -1,5 +1,5 @@
 ## Data Science Projects
-[image](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/Repository%20Files/dasci.jpg)
+![](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/Repository%20Files/dasci.jpg)
 
 ### Welcome!
 
