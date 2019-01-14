@@ -1,6 +1,6 @@
 ## NYC Taxi Trip Duration Prediction
 
-![Screenshot](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/NYC-Taxi-Duration/NYC%20Taxi.jpeg)
+![Screenshot](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/NYC-Taxi-Duration/NYC_Taxi_Trip_Duration_files/figure-markdown_github/NYC%20Taxi.jpeg)
 
 The code here represents my final submission for the [competition](https://www.kaggle.com/c/nyc-taxi-trip-duration) by the same name hosted on Kaggle. I took up this project out of curiosity back when R was still the leading programming language for data science. It is one of my first attempts at predictive analytics - just an outlet for what I was learning about machine learning through an online course.
 
@@ -12,7 +12,7 @@ The challenge was to build a model that predicts the total ride duration of taxi
 
 The results were evaluated using the RMSLE (Root Mean Square Logarithmic Error). RMSLE is calculated using - 
 
-![Screenshot](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/NYC-Taxi-Duration/formula.PNG)
+![Screenshot](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/NYC-Taxi-Duration/NYC_Taxi_Trip_Duration_files/figure-markdown_github/formula.PNG)
 
 As per this evaluation metric, I had an RMSLE score on the private leaderboard of 0.475 while the winning solution had a score of 0.289. Overall I stood 747th out of 1257 teams on the Public Leaderboard. Not bad for a first attempt. :)
 
