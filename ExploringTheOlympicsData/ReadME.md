@@ -1,6 +1,6 @@
 ## Exploring 120 years of Olympics Data
 
-![image](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/ExploringTheOlympicsData/ExploringtheOlympicsData_files/1200px-Olympic_rings_without_rims.svg.png)
+![image](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/Repository%20Files/ExploringTheOlympicsData/ExploringtheOlympicsData_files/Olympics.png)
 
 An innocent discussion around intra-mural sports with some friends at University turned into a grand debate about sporting prowess and we decided to turn it into a Python project!
 
