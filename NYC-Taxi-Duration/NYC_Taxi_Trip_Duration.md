@@ -375,7 +375,7 @@ ggplot(train) +
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-![Figure1](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/NYC-Taxi-Duration/NYC_Taxi_Trip_Duration_files/figure-markdown_github/unnamed-chunk-20-1.png)
+![Figure1](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/Repository%20Files/NYC-Taxi-Duration/NYC_Taxi_Trip_Duration_files/figure-markdown_github/unnamed-chunk-20-1.png)
 
 ``` r
 # add log transform of trip duration variable and distance variable
@@ -397,7 +397,7 @@ ggplot(train) +
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-![Figure2](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/NYC-Taxi-Duration/NYC_Taxi_Trip_Duration_files/figure-markdown_github/unnamed-chunk-22-1.png)
+![Figure2](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/Repository%20Files/NYC-Taxi-Duration/NYC_Taxi_Trip_Duration_files/figure-markdown_github/unnamed-chunk-22-1.png)
 
 ``` r
 ggplot(train) +
@@ -409,7 +409,7 @@ ggplot(train) +
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-![Figure3](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/NYC-Taxi-Duration/NYC_Taxi_Trip_Duration_files/figure-markdown_github/unnamed-chunk-23-1.png)
+![Figure3](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/Repository%20Files/NYC-Taxi-Duration/NYC_Taxi_Trip_Duration_files/figure-markdown_github/unnamed-chunk-23-1.png)
 
 ### Distance 0 means ride cancellation.
 
@@ -450,7 +450,7 @@ ggplot(data = train, mapping = aes(x = distance, y = trip_duration))+
   )
 ```
 
-![Figure4](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/NYC-Taxi-Duration/NYC_Taxi_Trip_Duration_files/figure-markdown_github/unnamed-chunk-26-1.png)
+![Figure4](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/Repository%20Files/NYC-Taxi-Duration/NYC_Taxi_Trip_Duration_files/figure-markdown_github/unnamed-chunk-26-1.png)
 
 We see many outliers here with very large distance but trip durations
 very less.Let’s calculate speed to get an estimate of the outliers.
