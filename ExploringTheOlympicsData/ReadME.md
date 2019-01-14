@@ -25,4 +25,4 @@ One thing I learnt that I really didn't need data for is that I, being an Indian
 ... and much more!
 
 ### Repository Structure
-The `ExploringTheOlympicsData.ipynb` file has the code I used to perform my analysis. I used Jupyter notebook and Python 2.7.
+[`ExploringTheOlympicsData.ipynb`](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/ExploringTheOlympicsData/ExploringtheOlympicsData.ipynb) file has the code I used to perform my analysis. I used Jupyter notebook and Python 2.7.
