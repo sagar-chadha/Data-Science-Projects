@@ -16,6 +16,11 @@ A look at the training images revealed that certain objects had more of a presen
 * We chose the aforementioned **43 object classes and a subset of ~ 300K images** with these objects. We had atleast 400 images for each object class in the training data.
 * We decided to use a pretrained **YOLO v2.0 algorithm** because of its speed, computational power and the abundance of online articles that could guide us through the process. We then decided to re-train the last layer of the model using our images so that it could predict new classes of objects (Transfer Learning)
 
+### Concepts Used
+* Convolutional Neural Networks (Take this [course](https://www.coursera.org/learn/convolutional-neural-networks) for an excellent introduction to CNNs)
+* Transfer Learning
+* YOLO model
+
 ### Results
 We trained the last layer of the YOLO model for 20-30 epochs to get it to recognize the new objects that we were training with with satisfactory confidence levels. An example of an output that we got from the CNN is shown below - 
 ![](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/Repository%20Files/Object%20Detection%20with%20YOLO/result.png)
