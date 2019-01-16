@@ -30,4 +30,4 @@ We were surprised how well the model recognized man and woman even if they were 
 For a detailed account of our work, you can read our team's article on this project on [Medium](https://towardsdatascience.com/object-detection-using-google-ai-open-images-4c908cad4a54).
 
 ### Repository Structure
-`Object_Detection.ipynb` file is the code that we used to perform this computer vision task. Since we couldn't run it on our local machines, outputs would be missing in most places.
+[`Object_Detection.ipynb`](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/Object%20Detection%20with%20YOLO/Object_Detection.ipynb) file is the code that we used to perform this computer vision task. Since we couldn't run it on our local machines, outputs would be missing in most places.
