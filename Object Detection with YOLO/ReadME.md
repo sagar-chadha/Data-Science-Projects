@@ -1,5 +1,6 @@
 ## Object Detection using Google AI Open Images
 
+![](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/Repository%20Files/Object%20Detection%20with%20YOLO/obj_det.png)
 
 My team of budding data scientists and I decided to try our hands at the [Google AI Open Image challenge](https://www.kaggle.com/c/google-ai-open-images-object-detection-track) hosted on Kaggle. We thought of this as the perfect opportunity to get our hands dirty with neural networks and convolutions, and potentially impress our professors and classmates. 
 
