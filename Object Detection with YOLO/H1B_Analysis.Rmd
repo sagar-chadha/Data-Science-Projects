@@ -1,0 +1,474 @@
+---
+title: "H1B Visa Analysis"
+output: 
+  md_document: 
+    variant: markdown_github
+  keep_md: yes
+  fig_width: 12
+  fig_height: 4
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      fig.width = 12,
+                      fig.height = 8)
+```
+
+## H1B Visa Analysis
+
+In this particular project, my team and I look at 500,000 rows of visa applications from 2011 to 2017 and try to predict with the maximum possible accuracy, the acceptance or denial of a visa application.
+
+Let's look at the data and see what variables we have.
+
+```{r, include = FALSE, echo = FALSE}
+library(tidyverse)
+
+```
+
+```{r}
+cleaned_data <- readRDS("FinalDataset_Group 3.RDS")
+glimpse(cleaned_data)
+```
+
+The predictors are as follows - <br>
+* `sub_mon` is the month of submission of the visa application.
+* `de_mon` is the month the decision was provided.
+* `workers` is the standardized number of workers with H1B already working for the employer.
+* `fulltime` denotes whether the job is full time or not.
+* `pay_unit` is the job one that pays yearly, monthly, hourly or weekly.
+* `h1bdepen` signifies whether the candidate has dependents.
+* `willful_violator` whether the employer has, in the past, violated H1B rules
+* `status` is the target variable - 'Certified' or 'Denied'
+* `STEM` whether the employment comes under the STEM category
+* `employer_region`, `worksite_region` region of the employer headquarters and region of employment
+* `sub_to_dec` scaled time interval between submission of application to decision
+* `wage` standardised pay scale of the employment
+* `soc_new` denotes a group name for the type of employment
+
+## Exploratory Data Analysis
+Let's look through the data and see if we find any patterns that can help us predict the outcome.
+
+### Status v/s Waiting time between submission and decision
+```{r, echo = FALSE, cache = TRUE}
+
+# status vs waiting times
+ggplot(cleaned_data, aes(x = status, y = Sub_to_dec)) +
+  geom_boxplot() +
+  theme_bw() +
+  scale_y_continuous("Scaled Waiting Times") +
+  scale_x_discrete("Application Status") +
+  ggtitle("Waiting Times vs Application Status") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+There is a clear pattern here - applications that wait longer are generally certified. Decisions that are quickly made are generally 'Denials'
+
+### Status v/s Wages
+
+```{r, echo = FALSE, cache = TRUE}
+ggplot(cleaned_data, aes(x = status, y = wage)) +
+  geom_boxplot() +
+  theme_bw() +
+  scale_y_continuous("Scaled Wages") +
+  scale_x_discrete("Application Status") +
+  ggtitle("Wages vs Application Status") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
+
+We don't find much of a pattern here. Both categories have wages that look pretty similar in distribution.
+
+### Status v/s application submission month
+
+```{r, echo = FALSE, cache = TRUE}
+d_month_status <- as.data.frame(cleaned_data %>%
+                                  group_by(sub_mon, status) %>%
+                                  summarise(Count = n()))
+
+d_month_status <- d_month_status %>% spread(key = status, value = Count)
+
+d_month_status$DENIED[is.na(d_month_status$DENIED)] <- 0
+
+d_month_status$prop_denied <- d_month_status$DENIED*100/(d_month_status$CERTIFIED + d_month_status$DENIED)
+
+ggplot(d_month_status, aes(x = sub_mon, y = prop_denied)) +
+  geom_bar(stat = "identity") +
+  ggtitle("Submission Month vs Denial Rate") +
+  scale_x_discrete("Application Submission Month") +
+  scale_y_continuous("Percentage applications denied")+
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+We find denial rates changing slightly with application submission months but not much.
+
+### decision month vs denial rate
+
+```{r, echo = FALSE, cache = TRUE}
+d_month_status <- as.data.frame(cleaned_data %>%
+                                  group_by(de_mon, status) %>%
+                                  summarise(Count = n()))
+
+d_month_status <- d_month_status %>% spread(key = status, value = Count)
+
+d_month_status$DENIED[is.na(d_month_status$DENIED)] <- 0
+
+d_month_status$prop_denied <- d_month_status$DENIED*100/(d_month_status$CERTIFIED + d_month_status$DENIED)
+
+ggplot(d_month_status, aes(x = de_mon, y = prop_denied)) +
+  geom_bar(stat = "identity") +
+  ggtitle("Decision Month vs Denial Rate") +
+  scale_x_discrete("Application Decision Month") +
+  scale_y_continuous("Percentage applications denied")+
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
+
+
+## Model training
+Let's now try to fit a few models and predict the application status.
+
+### Training and testing data
+We will split the data into training and testing portions with a 90-10 split.
+
+```{r}
+ds <- cleaned_data # Copy the data to ds variable
+
+ds$sub_mon <- as.factor(ds$sub_mon)
+ds$de_mon <- as.factor(ds$de_mon)
+
+train <- sample(dim(ds)[1],dim(ds)[1]*.9) # 90/10 training testing split
+
+```
+
+### Logistic Regression
+ 
+We define 'Denied' as positive class since that is the rare class that we are interested to predict.
+
+```{r, cache = TRUE}
+ds.train <- ds[train,] # Set up training set
+ds.test <- ds[-train,] # Set up testing set
+logit <- glm(status~., data=ds.train, family = "binomial") # Fit the model
+summary(logit)
+```
+
+A summary of the model shows -
+* Positive coefficients on months 2 and 3 which means odds of denial increase in these months.
+* Suprisingly full time jobs also have slightly more odds of denial
+* pay unit 'year' has a large negative coefficient i.e. reduces odds of denial
+
+Let's look at a confusion matrix to see how the model performs on the testing data.
+```{r, echo = FALSE}
+
+preds <- predict(logit,ds.test[,-8],type = 'response') # Generate predictions between 0 and 1
+preds.log <- rep("CERTIFIED",length(preds))
+preds.log[preds >= .5] <- "DENIED" # Assign classifications to preds.log based on the predictions
+t.full <- table(ds.test$status,preds.log)
+
+ # Confusion matrix
+cat("Confusion matrix for logistic Regression - \n")
+t.full
+
+cat("\n False Negative Rate: \n")
+cat(round(t.full[2,1]*100/sum(t.full[2,]),2),"%")
+
+
+```
+
+Our logistic model captures most of the certified cases, which is expected. As far as denied cases go, we are capturing about 33.5% of the actual denied cases which is not very good! A lot of the actually denied cases are being predicted as Certified by the model, we dont want that.
+
+### Stepwise Logistic Regression
+
+Previously we tried using all the variables we had to build our model. This strategy can backfire if there's many variables that add no value to the prediction. Lets use the stepwise predictor selection strategy and see if we can do better!
+
+We will use the backward strategy, i.e. we will fit all variables and then try to cut down on variables that aren't important.
+
+```{r, cache = TRUE, warning = FALSE}
+
+logit.step <- step(logit,direction = "backward")
+# formula(logit.step) gives back the full model
+# Model from backwards selection below
+# logit.step <- glm(status ~ sub_mon + de_mon + workers + fulltime + pay_unit + h1bdepen + willful_violator +
+#                    STEM + employer_region + worksite_region + Sub_to_dec + wage + 
+#                    soc_new,data=ds.train,family = 'binomial')
+summary(logit.step)
+```
+
+So the backward selection model shows that removing any variable would lead to an increase in the AIC scores. All variables that we have captured are actually important.
+
+```{r}
+# Prediction error
+preds.step <- predict(logit.step,ds.test[,-8],type = 'response') # Generate predictions between 0 and 1
+preds.log.step <- rep("CERTIFIED",length(preds.step))
+preds.log.step[preds.step >= .5] <- "DENIED" 
+t.step <- table(ds.test$status,preds.log.step)
+
+ # Confusion matrix
+cat("Confusion matrix for stepwise logistic Regression - \n")
+t.step # Confusion matrix
+
+cat("\n False Negative Rate: \n")
+round(t.step[2,1]*100/sum(t.step[2,]),2) # 65.169% FN error
+```
+
+We see a large false negative rate for these problems, i.e. for cases where the application was actually denied, we are predicting that it will be certified. This isn't a good result for our model! We need to make sure that False Negatives are minimized while still maintaining a fair level of accuracy.
+
+### Threshold selection
+
+Lets look at various threshold values and their corresponding error rates and False negative error rates. We will use this chart to select an optimum value for threshold based on our requirements.
+
+```{r, echo = FALSE}
+ds.test$pre <- predict(logit.step,ds.test[,-8], type='response')
+thre=seq(0.01,0.9,0.01)
+thre_FNR=NULL
+thre_error=NULL
+thre_FPR=NULL
+
+# Denied=1 i.e. Positive
+
+for (i in thre){
+  ds.test$pred='CERTIFIED'
+  ds.test$pred[which(ds.test$pre>=i)]='DENIED'
+  ds.test$pred=as.factor(ds.test$pred)
+  table(ds.test$status, ds.test$pred)
+  result=data.frame(table(ds.test$status, ds.test$pred))
+  #result: [1]TN [2]FN [3]FP [4]TP
+  TN=result[1,3]
+  FN=result[2,3]
+  FP=result[3,3]
+  TP=result[4,3]  
+  #TPR=TP/(TP+FN) #sensitivity/power
+  FNR=FN/(FN+TP) #false negative rate -- goal is to min FNR
+  FPR=FP/(TN+FP) #specitificity
+  error=(FP+FN)/dim(ds.test)[1]
+  #thre_TPR=c(thre_TPR,TPR)
+  thre_FNR=c(thre_FNR,FNR)
+  thre_error=c(thre_error,error)
+  thre_FPR=c(thre_FPR,FPR)
+}
+thre_set=data.frame(thre,thre_error,thre_FNR,thre_FPR)
+ds.test <- ds.test[,-c(15,16)]
+
+# Plot of total_error_rate, false_negative_rate, false_positve_rate
+# Goal: minimize all these three rate, escapecially FNR
+
+plot(thre_error~thre,pch=15,col="DarkTurquoise",cex=0.75,ylim=c(0,1),type='b',xlab='threshold',ylab='')
+
+points(thre,thre_FNR,pch=16,col="DeepPink",cex=0.75)
+
+points(thre,thre_FPR,pch=17,col="RosyBrown",cex=0.75)
+
+lines(thre,thre_FNR,col="DeepPink")
+
+lines(thre,thre_FPR,col="RosyBrown")
+
+legend(0.6, 0.56, c("Error_rate","FNR","FPR"),
+       col = c("DarkTurquoise","DeepPink","RosyBrown"),
+       text.col=c("DarkTurquoise","DeepPink","RosyBrown"),pch=c(15,16,17))
+
+abline(v=0.08,lty=2,col='blue')
+
+```
+
+From the above plot, we can choose threshold = 0.08. Lets look at the various error rates with the chosen value of threshold.
+
+```{r, echo = FALSE}
+
+# Fit predictions based on new threshold
+
+preds.log.thre <- rep("CERTIFIED",length(preds.step))
+
+preds.log.thre[preds.step >= .08] <- "DENIED" 
+
+t.step <- table(ds.test$status,preds.log.thre)
+
+cat("Confusion matrix with the new threshold - \n")
+t.step # Confusion matrix
+
+cat("\nFalse negative rate with the new threshold - \n")
+cat(round(t.step[2,1]*100/sum(t.step[2,]),2),"%") # 42.055% FN error
+
+
+
+```
+
+### Linear Discriminant Analysis
+
+```{r, cache = TRUE}
+## LDA
+
+library (MASS) 
+
+# Fit LDA model
+m_lda=lda(status~.,data=ds.train) 
+
+lda.pred=predict(m_lda,ds.test[,-8])
+
+lda_pred=lda.pred$class
+
+cat("Confusion Matrix for the LDA model - \n")
+t.lda <- table(ds.test$status, lda_pred)
+t.lda
+
+cat("\n False negative rate - \n")
+
+cat(round(t.lda[2,1]*100/sum(t.lda[2,]),2),"%")
+
+
+# Set equal prior probabilities
+
+m_lda2=lda(status~sub_mon+de_mon+fulltime+pay_unit+h1bdepen
+          +willful_violator+STEM+employer_region+worksite_region
+          +Sub_to_dec+wage,data=ds.train,prior=c(0.5,0.5))
+
+lda.pred2=predict(m_lda2,ds.test[,-8])
+lda_pred2=lda.pred2$class
+
+cat("Confusion Matrix for the updated LDA model - \n")
+table(ds.test$status, lda_pred2)
+
+```
+
+### Random Forest Model
+
+Finally let's try a random forest and XGBoost models to see how they perform on this data. Random forest creates a large number of uncorrelated tree models and averages the prediction from them to get the final prediction. Since our predictors are important, we should hope that different trees would capture different patterns and the overall accuracy of the model would get better.
+
+```{r, cache = TRUE}
+
+##### Random Forest
+library(randomForest)
+
+# Iterate through different numbers of trees to find the best one
+for (i in c(50,100)){
+  status.rf.trees = randomForest(formula = status ~ ., data = ds.train, ntree = i, 
+                                 proximity = F, mtry = 4)
+  pred.bag.trees = predict(status.rf.trees, newdata = ds.test, type = "response" )
+  print(table(pred.bag.trees,ds.test$status)[2,2]/(table(pred.bag.trees,ds.test$status)[1,2]+table(pred.bag.trees,ds.test$status)[2,2]))
+}
+```
+
+We see from the above iterations (printed values are accuracies) that 50 is the best number of trees. It costs too much time to run 250 trees for only 0.2% improvement. Next, lets check for the best value for the threshold.
+
+```{r}
+# Iterate through different sets of thresholds to find the best set
+for (i in seq(0.05, 0.5, 0.05)){
+  status.rf.c = randomForest(formula = status ~ ., data = ds.train, ntree = 50,
+                           proximity = F, mtry = 4, cutoff=c(i,1-i))
+  pred.bag.c = predict(status.rf.c, newdata = ds.test, type = "response" )
+  print(table(pred.bag.c,ds.test$status)[2,2]/(table(pred.bag.c,ds.test$status)[1,2]+ table(pred.bag.c,ds.test$status)[2,2]))
+  # This also prints accuracy, not error
+}
+# The best threshold was the default threshold.
+```
+The best threshold is the default threshold of 0.5. Let's run the best model on our data and see how it does on the test data.
+
+```{r, cache = TRUE}
+# Random forest with tuned ntree and prediction threshold.
+status.rf = randomForest(formula = status ~ ., data=ds.train, ntree=50, proximity=F, mtry = 4)
+varImpPlot(status.rf, main="Importance for Random Forest")
+
+# Bagging model with the 3 best variables as identified by Importance plot
+status.bag = randomForest(formula = status ~ wage + Sub_to_dec + soc_new, data=ds.train, ntree=50, proximity=F, mtry = 3)
+varImpPlot(status.bag)
+pred.bag = predict(status.bag,newdata = ds.test, type = "response")
+
+t_rf <- table(ds.test$status,pred.bag) # 46.102% Error
+
+cat("Confusion matrix for this model - \n")
+t_rf
+
+cat("False negative rate - \n")
+cat(round(t_rf[2,1]*100/sum(t_rf[2,]),2),"%")
+
+```
+
+### XG Boost Model
+
+XGBoost only works with data matrix format. Let's convert our data to that format and try building a model using XGBoost.
+
+```{r, echo = FALSE, include = FALSE}
+##### XGBoost
+require(xgboost)
+require(Matrix)
+require(data.table)
+
+previous_na_action <- options('na.action')
+h1b <- cleaned_data
+train_data <- ds.train
+test_data <- ds.test
+
+
+##Data preperation : Reading & Cleaning dataset :Replacing status with status_final as the last column for training and testing data
+train_data$status_final <-train_data$status
+
+train_data=train_data[-c(8)]
+test_data$status_final<-test_data$status
+test_data_n <-test_data
+test_data_n <- test_data_n[-c(8)]
+
+test_data_n <- test_data_n[-c(14)]
+train_data_n <-train_data
+train_data_n <-train_data_n[-c(14)]
+
+##Data Preperation : XGBoost works with only matrix input
+
+#Converting train data to matrix format
+options(na.action='na.pass')
+sparse_matrix <- model.matrix(~., data = train_data_n)
+#converting test data to matrix format
+sparse_matrix_test <- model.matrix(~ ., data = test_data_n)
+
+
+#Creating a numeric vector with the expected output : CERTIFIED ->1, DENIED->0
+output_vector <- train_data[c(14)]
+output_vector$status_final=gsub("CERTIFIED", 0, output_vector$status_final) 
+output_vector$status_final=gsub("DENIED", 1, output_vector$status_final)
+
+#XGBoost function requires the output in matrix format
+output_vector <-as.matrix(output_vector) 
+
+```
+
+```{r, cache = TRUE}
+# XGBoost algorithm for classification
+bst <- xgboost(data = sparse_matrix, label = output_vector, max_depth = 10,
+               eta = 0.3, nthread = 2, nrounds = 200, objective = "binary:logistic")
+
+# Identifying important features
+importance <- xgb.importance(feature_names = colnames(sparse_matrix), model = bst)
+importanceRaw <- xgb.importance(feature_names = colnames(sparse_matrix), model = bst, data = sparse_matrix, label = output_vector)
+importanceClean <- importanceRaw[,`:=`(Cover=NULL, Frequency=NULL)]
+
+# Plotting important variables
+xgb.plot.importance(importance_matrix = importance)
+```
+
+The  
+```{r}
+y_pred <- predict(bst, data.matrix(sparse_matrix_test))
+
+# Attaching predicted column to the test dataset
+test_data$pred <- y_pred
+names(test_data)
+table(test_data$pred)
+
+# Assigning threshold as 0.5 to convert numeric predictions to categorical
+test_data$predv[which(test_data$pred >=0.05)]= 'DENIED'
+test_data$predv[which(test_data$pred <0.05)]= 'CERTIFIED'
+
+#TESTING
+#Generating confusion matrix
+confusion_matrix <- table(test_data$status_final,test_data$predv)
+confusion_matrix # 30.182% error *Best model*
+FP_error <- confusion_matrix[2,1]/(confusion_matrix[2,2]+confusion_matrix[2,1])
+TN_error <- confusion_matrix[1,2]/(confusion_matrix[1,1]+confusion_matrix[1,2])
+
+FP_error
+TN_error
+FP_error_rate <-FP_error *100
+TN_error_rate <-TN_error *100
+FP_error_rate
+TN_error_rate
+
+options(na.action=previous_na_action$na.action)
