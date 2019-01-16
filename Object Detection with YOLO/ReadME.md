@@ -25,7 +25,7 @@ A look at the training images revealed that certain objects had more of a presen
 We trained the last layer of the YOLO model for 20-30 epochs to get it to recognize the new objects that we were training with with satisfactory confidence levels. An example of an output that we got from the CNN is shown below - 
 ![](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/Repository%20Files/Object%20Detection%20with%20YOLO/result.png)
 
-We were surprised how well the model recognized man and woman even if they were facing away. This is probably because man and woman had a lot of appearances in photos (as the class frequency chart above shows).
+We were surprised how well the model recognized man and woman even if they were facing away. This is probably because man and woman had a lot of appearances in photos (as the class frequency chart above shows). To look at more predictions from our model, go [here](https://github.com/sagar-chadha/Data-Science-Projects/tree/master/Repository%20Files/Object%20Detection%20with%20YOLO/Predictions).
 
 For a detailed account of our work, you can read our team's article on this project on [Medium](https://towardsdatascience.com/object-detection-using-google-ai-open-images-4c908cad4a54).
 
