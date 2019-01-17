@@ -13,8 +13,8 @@ In addition, I wanted to use what I had learnt about predictive modelling and se
 
 ### Concepts Used
 * Dataframe manipulations using the Pandas library - renaming and dropping columns, using melt and pivot to reshape tables, groupby, etc.
-* Various visualizations using the Matplotlib library - Stacked bar charts, line charts.
-* Linear regression and K-Nearest Neighbors
+* Various visualizations using the **Matplotlib** library - Stacked bar charts, line charts.
+* **Linear regression and **K-Nearest Neighbors**
 
 ### Results
 One thing I learnt that I really didn't need data for is that I, being an Indian, should not have challenged an American when it comes to Olympics medal tallies (My bad!). But in all seriousness, I learnt a lot about the Olympics from this analysis, some of it being - 
