@@ -5,7 +5,7 @@
 Use reddit data to figure out the tendencies of cord-cutters: how they compare streaming services, what their concerns are with cable tv, their favorite shows and complaints with their streaming services.
 
 ### The data
-Using the Reddit API and pushshift.io (Big Query), we extracted user comments from the [cordcutter subreddit](https://www.reddit.com/r/cordcutters/) for the last 4 months. We had a total of about 30,000 comments to analyse.
+Using the Reddit API and [pushshift.io](https://pushshift.io/) (Big Query), we extracted user comments from the [cordcutter subreddit](https://www.reddit.com/r/cordcutters/) for the last 4 months. We had a total of about 30,000 comments to analyse.
 
 ### Concepts used
 * Lift analysis and MDS plots
