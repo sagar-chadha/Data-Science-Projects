@@ -1,5 +1,5 @@
 ## Cord Cutting
-![image](https://github.com/sagar-chadha/Coursework/blob/master/Repository_files/Text_Analytics/Cord_Cutting/CordCutting.jpg)
+![Cord Cutting](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/Repository%20Files/Customer_Sentiment_Analysis/CordCutting.jpg)
 
 ### The Task
 Use reddit data to figure out the tendencies of cord-cutters: how they compare streaming services, what their concerns are with cable tv, their favorite shows and complaints with their streaming services.
