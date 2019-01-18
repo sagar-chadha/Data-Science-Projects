@@ -11,7 +11,7 @@ Using the Reddit API and pushshift.io (Big Query), we extracted user comments fr
 * Lift analysis and MDS plots
 * Finding Relevant entities (Cable companies, streaming services) using the Spacy package.
 * Topic modelling using Latent Dirichlet Allocation
-* Semantic Orientation and POS bigrams for opinion mining
+* Extracting bigrams using POS tagging, Sentiment Mining and Semantic Orientation
 
 ### Results
 * LDA shows important topics that people discuss are sports packages, net neutrality, the traditional cable experience, and user experience.
