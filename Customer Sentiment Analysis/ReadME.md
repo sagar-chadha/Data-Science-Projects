@@ -19,5 +19,5 @@ Using the Reddit API and [pushshift.io](https://pushshift.io/) (Big Query), we e
 * POS Bigram analysis reveals interesting crowd attitudes towards streaming services, specific shows and actors. For instance, 'Adam Sandler' and 'Big Bang Theory' are associated with negative sentiments while 'Stranger Things' are associated with positive sentiments.
 
 ### Repository Structure
-'Cord_Cutting.ipynb' has the code with the final analysis. <br>
+['Cord_Cutting.ipynb'](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/Customer%20Sentiment%20Analysis/Cord_Cutting.ipynb) has the code with the final analysis. <br>
 ['Cord_Cutting.pdf'](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/Customer%20Sentiment%20Analysis/Cord_Cutting.pdf) has our final presentation.
