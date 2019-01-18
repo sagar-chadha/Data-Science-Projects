@@ -20,4 +20,4 @@ Using the Reddit API and pushshift.io (Big Query), we extracted user comments fr
 
 ### Repository Structure
 'Cord_Cutting.ipynb' has the code with the final analysis. <br>
-['Cord_Cutting.pdf']() has our final presentation.
+['Cord_Cutting.pdf'](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/Customer%20Sentiment%20Analysis/Cord_Cutting.pdf) has our final presentation.
