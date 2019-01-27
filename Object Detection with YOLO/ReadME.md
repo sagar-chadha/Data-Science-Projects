@@ -33,3 +33,4 @@ For a detailed account of our work, you can read our team's article on this proj
 
 ### Repository Structure
 [`Object_Detection.ipynb`](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/Object%20Detection%20with%20YOLO/Object_Detection.ipynb) file is the code that we used to perform this computer vision task. Since we couldn't run it on our local machines, outputs would be missing in most places.
+If you want to look at a 'Hello World' project for computer vision, check this notebook out [`Hello Computer Vision World.ipynb`](https://github.com/sagar-chadha/Data-Science-Projects/blob/master/Object%20Detection%20with%20YOLO/Hello%20Computer%20Vision%20World.ipynb)
